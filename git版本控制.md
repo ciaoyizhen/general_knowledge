@@ -11,8 +11,9 @@
 2. 添加文件到git管理工具中
 
    ```
-   git readme.txt  # 添加readme.txt文件到git管理中
+   git add readme.txt  # 添加readme.txt文件到git管理中
    
+   git add .  # 将当前所有的文本都提交到git管理中 
    不建议全部提交git管理
    ```
 
@@ -48,6 +49,9 @@
    
    # 若输出的信息太多，可以使用
    git log --pretty=oneline
+   
+   # 若记录太多可以使用
+   git log -i  # i是你想看见的最近几条记录 如-2就是看两条
    ```
 
 4. 版本回退
@@ -163,4 +167,170 @@ git remove rm origin
 
 # 解除关联，并非真的删除
 ```
+
+
+
+### 从远程仓库克隆
+
+```
+使用命令  git clone 地址
+```
+
+
+
+
+
+## 分支管理
+
+### 创建和合并分支
+
+```
+# 创建分支
+git branch dev  # dev表示分支名
+
+# 查看分支
+git branch
+
+# 切换分支
+git switch dev  # dev 表示分支名
+
+# 合并分支
+git merge dev  # dev 表示分支名
+
+# 删除分支
+git branch -d dev # dev为分支名  若东西没有合并就删除 可能会报错，这时可以使用-D来操作
+```
+
+
+
+### 解决冲突
+
+当两个分支内的代码不是简单的增加或删除，而是都有部分的修改时，在合并分支时，会报错。
+
+这时，直接打开文件，会将不同的地方，git都会指出来，然后进行手动修改。
+
+修改完成后 进行 add和commit的操作即可。
+
+最后删除分支即可。
+
+
+
+### git stash功能
+
+若新增了一个分支，并往里添加了一个新文件，切回主分支，新文件也会存在(即使使用了add也是一样，只有commit了才会不在别的分支看到)。
+
+但这时想切换成别的分支，且需要该分支原始的样子，即没有新文件。
+
+这时需要使用(需要先将文件进行add，因为只有add了，git才对其进行管理)
+
+```
+git stash  # 该功能是将文件的修改隐藏，恢复成commit的样子
+
+git stash pop  # 恢复隐藏 并删除这个隐藏
+
+# 当有多个隐藏时
+git stash list  # 查看隐藏
+
+# index是指 git stash list中的结果
+git stash apply stash@{index}  # 恢复隐藏，但不删除隐藏
+git stash drop stash@{index}  # 删除隐藏
+
+```
+
+
+
+### 多人开发
+
+当一个人提交修改代码到仓库中，你也修改了代码，这时，想要提交代码是会出现问题的。
+
+此时，操作如下:
+
+1. 进行关联操作
+
+   ```
+   git branch --set-upstream-to=origin/仓库分支名 你的分支
+   # 这个是将远程仓库的分支和你的分支关联起来
+   # 例如 git branch --set-upstream-to=origin/main dev 是将仓库的主分支和你的dev分支关联起来
+   ```
+
+   
+
+2. 将前一个人修改的代码拉取下来
+
+   ```
+   git pull  # 要在你的关联的分支下
+   ```
+
+   
+
+3. 可能会出现的情况(没出现则直接跳到6)
+
+   ```
+   hint: You have divergent branches and need to specify how to reconcile them.
+   hint: You can do so by running one of the following commands sometime before
+   hint: your next pull:
+   hint:
+   hint:   git config pull.rebase false  # merge
+   hint:   git config pull.rebase true   # rebase
+   hint:   git config pull.ff only       # fast-forward only
+   hint:
+   hint: You can replace "git config" with "git config --global" to set a default
+   hint: preference for all repositories. You can also pass --rebase, --no-rebase,
+   hint: or --ff-only on the command line to override the configured default per
+   hint: invocation.
+   fatal: Need to specify how to reconcile divergent branches.
+   ```
+
+   翻译如下：
+
+   
+
+4. 进行对应的操作
+
+   ```
+   # 例如
+   git config pull.rebase false
+   ```
+
+   
+
+5. 在进行拉去
+
+   ```
+   git pull
+   ```
+
+   
+
+6. 进行修改(例如修改两个冲突的地方)
+
+7. 提交
+
+   
+
+### 变基操作
+
+如何将多个commit结果合并成一个
+
+```
+git rebase -i HEAD~number  # number为你要合并的数量，并且是以HEAD开始
+
+之后会进入vi编辑
+
+将第一个pick保留 其余的改为s  # 具体的可以看下面的提示命令
+按esc键 :wq保存退出
+然后进入一个编辑提交信息的vi编辑
+然后将原先的提交信息删除，写上这一次的
+按esc ：wq保存退出即可
+```
+
+
+
+
+
+
+
+
+
+## 标签管理
 
